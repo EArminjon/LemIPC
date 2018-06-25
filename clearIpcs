@@ -1,0 +1,42 @@
+#!/bin/bash
+
+TMP="$(ipcs | tr '\n' '/')"
+
+IFS='/' read -a IPCS <<< "$TMP"
+
+SHMID=0
+SEMID=0
+MSGID=0
+
+for line in "${IPCS[@]}"; do
+    TO_DEL="$(echo $line | cut -d ' ' -f2)"
+
+    if [ "$SEMID" == '1' -a "$TO_DEL" != "" ]; then
+	echo "Remove sem : $TO_DEL"
+	ipcrm sem "$TO_DEL"
+    elif [ "$SHMID" == '1' -a "$(echo $line | cut -d ' ' -f5)" == "10140" ]; then
+	echo "Remove shm : $TO_DEL"
+	ipcrm shm "$TO_DEL"
+    elif [ "$MSGID" == '1' -a "$TO_DEL" != "" ]; then
+	echo "Remove msg : $TO_DEL"
+	ipcrm msg "$TO_DEL"
+    fi
+
+    if [ "$TO_DEL" == "shmid" ]; then
+	SEMID=0
+	SHMID=1
+	MSGID=0
+    elif [ "$TO_DEL" == "semid" ]; then
+	SEMID=1
+	SHMID=0
+	MSGID=0
+    elif [ "$TO_DEL" == "msqid" ]; then
+	SEMID=0
+	SHMID=0
+	MSGID=1
+    elif  [ "$TO_DEL" == "" ]; then
+	SHMID=0
+	SEMID=0
+	MSGID=0
+    fi
+done

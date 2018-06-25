@@ -1,0 +1,15 @@
+#!/bin/bash
+
+./lemipc "$PWD" 1 &
+
+for i in {0..10}; do
+    ./lemipc "$PWD" 1 &
+    ./lemipc "$PWD" 2 &
+    ./lemipc "$PWD" 3 &
+    ./lemipc "$PWD" 4 &
+    ./lemipc "$PWD" 5 &
+    ./lemipc "$PWD" 6 &
+    ./lemipc "$PWD" 7 &
+    ./lemipc "$PWD" 8 &
+    ./lemipc "$PWD" 9 &
+done
